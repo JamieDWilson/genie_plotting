@@ -173,10 +173,14 @@ classdef plot_genie_lonlat < handle
         lat_label=true;
         % latitude tick labels (deg N)
         lat_tick_label=[-60 -30 -0 30 60];
+        % latitude limits of plot display (deg N)
+        lat_limits=[];
         % longitude tick labels (deg E)
         lon_tick_label=[-360:60:360];
         % longitude origin (in deg E, [] = origin in file)
         lon_origin=[];
+        % longitude limits of plot display (deg E)
+        lon_limits=[];
         
         %-------- OVERLAY DATA --------%
         % point dataset to overlay (default - no overlay data)
@@ -387,6 +391,14 @@ classdef plot_genie_lonlat < handle
                 obj.fig=figure;
             end
             
+            % set lon/lat limits to max if empty
+            if isempty(obj.lon_limits)
+                obj.lon_limits=[min(obj.lon) max(obj.lon)];
+            end
+            if isempty(obj.lat_limits)
+                obj.lat_limits=[min(obj.lat) max(obj.lat)];
+            end
+            
             % everything is now initialised
             % add listeners to monitor changes in certain parameters
             % from now on changing these parameters will redraw the plot
@@ -404,6 +416,8 @@ classdef plot_genie_lonlat < handle
             addlistener(obj,'lat_label','PostSet',@obj.handlePropertyEvents);
             addlistener(obj,'overlay_point_size','PostSet',@obj.handlePropertyEvents);
             addlistener(obj,'colormap','PostSet',@obj.handlePropertyEvents);
+            addlistener(obj,'lon_limits','PostSet',@obj.handlePropertyEvents);
+            addlistener(obj,'lat_limits','PostSet',@obj.handlePropertyEvents);
             
         end
         
@@ -423,8 +437,10 @@ classdef plot_genie_lonlat < handle
                 figure(obj.fig);
             end
 
-            % plot data, NaNs not plotted 
-            clf
+            % plot data, NaNs not plotted
+            if obj.autoplot
+                clf
+            end
             imAlpha=ones(size(plot_data));
             imAlpha(isnan(plot_data))=0;
             obj.im=imagesc([1:36],[1:36],plot_data,'AlphaData',imAlpha);
@@ -485,6 +501,9 @@ classdef plot_genie_lonlat < handle
                     scatter(obj.overlay_data_x,obj.overlay_data_y,obj.overlay_point_size,obj.overlay_data(:,3),'filled','MarkerEdgeColor','k');
                 end
             end
+            
+            % apply lon/lat plot limits
+            set(obj.ax,'XLim',obj.lon_to_x(obj.lon_limits),'YLim',fliplr(obj.lat_to_y(obj.lat_limits)));
             
             
         end
