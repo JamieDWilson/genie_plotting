@@ -142,7 +142,7 @@ classdef plot_genie_lonlat < handle
         % autoplot when calling function and changing parameters?
         % if false, use .plot to draw figure
         % (plots to the current figure/axes handle)
-        autoplot=true;
+        autoplot=false;
         
         %---------------------------------%
         % ------ DEFAULT PARAMETERS ----- %
@@ -157,6 +157,8 @@ classdef plot_genie_lonlat < handle
         c_nlevels=200;
         % colormap ('auto' = parula for single dataset, RdBu for difference)
         colormap='auto';
+        % reverse_colormap
+        reverse_colormap=false;
         
         %---------- COLORBAR ----------%
         % colorbar?
@@ -418,6 +420,7 @@ classdef plot_genie_lonlat < handle
             addlistener(obj,'colormap','PostSet',@obj.handlePropertyEvents);
             addlistener(obj,'lon_limits','PostSet',@obj.handlePropertyEvents);
             addlistener(obj,'lat_limits','PostSet',@obj.handlePropertyEvents);
+            addlistener(obj,'reverse_colormap','PostSet',@obj.handlePropertyEvents);
             
         end
         
@@ -431,6 +434,9 @@ classdef plot_genie_lonlat < handle
             
             % make colormap
             obj.make_colormap;
+            if obj.reverse_colormap
+                obj.c=flipud(obj.c);
+            end    
             
             % point at relevant figure handle
             if obj.autoplot
@@ -617,12 +623,12 @@ classdef plot_genie_lonlat < handle
        
        % plot zonal mean
        % varargin - NameValue Arguments of Line Properties
-       function plot_zonal_mean(obj,varargin)
+       function [lat , zonal] = plot_zonal_mean(obj,varargin)
            
-           zonal=zeros(obj.n_lat,1);
-           for n=1:obj.n_lat
-               zonal(n,1)=nanmean(obj.data(n,:));
-           end
+           figure;
+           
+           % mean across latitudes, flipped to match latitude order
+           zonal=flipud(nanmean(obj.data,2));
            
            %figure
            L=plot(obj.lat,zonal);
@@ -633,6 +639,7 @@ classdef plot_genie_lonlat < handle
            for n=1:2:numel(varargin)
                set(L,varargin{n},varargin{n+1});
            end
+           lat=obj.lat;
            
 
        end
