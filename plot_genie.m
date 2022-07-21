@@ -1,29 +1,11 @@
 
 
 classdef plot_genie < handle
-    
-    
-    methods
-        
-        function obj = plot_genie ( output_file , var_name , year , ind_var_value , data_scale )
-            
-            % constructor
-            % set class inputs to variables
-            obj.output_file = output_file; 
-            obj.var_name = var_name;   
-            obj.year = year;   
-            obj.ind_var = ind_var_value;
-            obj.data_scale = data_scale;
-            
-        end
-        
-    end
-    
 
     properties(SetObservable) 
         
         %---------------------------------%
-        % --- USER DEFINABLE DEFAULTS --- %
+        % ------- USER DEFINABLE  ------- %
         %---------------------------------%
         
         % autoplot when calling function and changing parameters?
@@ -83,51 +65,44 @@ classdef plot_genie < handle
     
     properties(GetAccess=public,SetAccess=public)
 
-        % ---- placeholders ----
+        % ---- placeholders ---- %
         output_file, var_name, year, ind_var_value, data_scale, ind_var
-        ind_var_name
-        longitude
-        depth
-        opt_args
-        data_n
-        data_2_flag
-        output_dirs
-        lat
-        lon
-        z
-        time
-        units
-        longname
-        data
-        data2
-        c
+        ind_var_name, longitude, depth, zt_edges
+        opt_args, data_n, data_2_flag, output_dirs, data, data2,
+        lat, lon, z, time
+        units, longname 
+        c,  reverse_colormap
         coastlines
-        n_lon
-        n_lat
-        lon_to_i
-        lat_to_j
         si_om 
-        lon_ticks
-        lat_ticks 
-        lat_to_y
-        lon_to_x
-        overlay_data_x
-        overlay_data_y
-        fig
-        ax
-        im
+        n_lon, n_lat, lon_to_i, lat_to_j, n_z 
+        lon_ticks, lat_ticks, z_ticks
+        lat_to_y, lon_to_x, lat_to_x, z_to_y
+        overlay_data_x, overlay_data_y
+        fig, ax, im
         lon_origin_data
-        zt_edges
-        n_z
-        reverse_colormap
-        lat_to_x
-        z_to_y
-        z_ticks
         
     end
     
     methods(Access = public)
         
+        %---------------------------------%
+        % --------- CONSTRUCTOR --------- %
+        %---------------------------------%
+        function obj = plot_genie ( output_file , var_name , year , ind_var_value , data_scale )
+            
+            % constructor
+            % set class inputs to variables
+            obj.output_file = output_file; 
+            obj.var_name = var_name;   
+            obj.year = year;   
+            obj.ind_var = ind_var_value;
+            obj.data_scale = data_scale;
+            
+        end
+        
+        %---------------------------------%
+        % ---------- INITIALISE --------- %
+        %---------------------------------%
         function initialise_plot_data(obj)
             
             % check 2nd data set details are entered correctly
@@ -200,7 +175,8 @@ classdef plot_genie < handle
             end
                    
 
-            % check variable exists & get metadata
+            % check data variable exists & get metadata
+            if ischar(obj.var_name)
             for nn=1:obj.data_n
 
                 netcdf_info=ncinfo(obj.output_dirs{nn});
@@ -232,16 +208,18 @@ classdef plot_genie < handle
                 end
 
             end
+            
 
             % get data
+            % from netcdf file
             obj.data=ncread(obj.output_dirs{1},obj.var_name);
             if obj.data_2_flag
                 obj.data2=ncread(obj.output_dirs{2},obj.var_name);
             end
-
+            
             % set missing values to NaNs
             obj.data(obj.data>1e30)=NaN;
-            
+            obj.data2(obj.data2>1e30)=NaN;
 
             % slice data
             netcdf_info=ncinfo(obj.output_dirs{1});
@@ -269,10 +247,7 @@ classdef plot_genie < handle
                     obj.data=obj.data-obj.data2;
                 end
             end
-
-            % scale data
-            obj.data=obj.data./obj.data_scale;
-
+            
             % orient data for plot
             switch obj.ind_var_name
                 case 'depth'
@@ -280,6 +255,18 @@ classdef plot_genie < handle
                 case 'lon'
                     obj.data=fliplr(rot90(obj.data,3));
             end
+            
+            else
+                obj.data=obj.var_name;
+%                 if obj.data_2_flag
+%                     obj.data2=obj.output_dirs{2};
+%                     obj.data=obj.data-obj.data2;
+%                 end
+            end
+            
+
+            % scale data
+            obj.data=obj.data./obj.data_scale;
 
             % colour scale
             if obj.data_2_flag
@@ -345,6 +332,9 @@ classdef plot_genie < handle
             
         end
         
+        %---------------------------------%
+        % ---------- COASTLINES --------- %
+        %---------------------------------%
         function [] = make_coastlines(obj,data)
            
             
@@ -363,6 +353,9 @@ classdef plot_genie < handle
             
         end
         
+        %---------------------------------%
+        % ---------- COLORMAP ----------- %
+        %---------------------------------%
         function [] = make_colormap(obj)
             
             if strmatch(obj.colormap,'auto')
@@ -377,6 +370,9 @@ classdef plot_genie < handle
             
         end   
         
+        %---------------------------------%
+        % ----- SI ORDERS OF MAG. ------- %
+        %---------------------------------%
         function [] = si_orders_of_mag(obj)
             
             % scale colorbar units
@@ -404,32 +400,40 @@ classdef plot_genie < handle
             end
         end
         
-       % re-plot figure wwhen user changes properties
-       function handlePropertyEvents(obj,src,evnt)
+        %---------------------------------%
+        % ----------- RE-PLOT ----------- %
+        %---------------------------------% 
+        % re-plot figure wwhen user changes properties
+        function handlePropertyEvents(obj,src,evnt)
           if any(src.Name) & obj.autoplot
                 evnt.AffectedObject.plot
           end
-       end
-        
-        
-        
-        
+        end
+         
     end
+    
+    
     
     methods (Static)
        
-       % save png
+       %---------------------------------%
+       % ---------- SAVE PNG ----------- %
+       %---------------------------------%
        function save_bitmap(filename)
            set(gcf, 'InvertHardcopy', 'off')
            print(filename,'-dpng')
        end
        
-       % save svg
+       %---------------------------------%
+       % ---------- SAVE SVG ----------- %
+       %---------------------------------%
        function save_vector(filename)
            print(filename,'-dsvg')
        end
        
-       
+       %---------------------------------%
+       % ---------- MAKE CMAP ---------- %
+       %---------------------------------%
        function [FCMAP] = make_cmap(PCNAME,PNCOL)
         % make_cmap
         %
