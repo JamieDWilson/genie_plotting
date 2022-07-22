@@ -7,10 +7,11 @@ Quick interactive plots of lon/lat or lat/depth fields from genie output.
 - [Inputs and Outputs](#inputs-and-outputs)
 - [Basic Use](#basic-use)
 - [Interactive Plotting](#interactive-plotting)
-- [Static Plotting and Subplots](#static-plotting-and-sub-plots)
+- [Static Plotting and Subplots](#static-plotting-and-subplots)
 - [Plotting custom arrays](#plotting-custom-arrays)
 - [Depth Integrated](#depth-integrated)
 - [Zonal Averages](#zonal-averages)
+- [Adding Contours](#adding-contours)
 - [Overlaying datapoints](#overlaying-datapoints)
 - [Saving plots](#saving-plots)
 - [Misc Tips](#misc-tips)
@@ -44,12 +45,12 @@ Outputs:
 
 Plot surface PO$_4$ lon/lat field from 3D netcdf output and scale to micromolar units:
 ```matlab
-fig=plot_genie_lonlat( 'fields_biogem_3d.nc' , 'ocn_PO4' , 9999.5 , 1 , 1e-6 )
+fig=plot_genie_lonlat( 'fields_biogem_3d.nc' , 'ocn_PO4' , 9999.5 , 1 , 1e-6 );
 ```
 
 Plot surface PO$_4$ lon/lat field as difference with another experiment. The colourscale will adjust to a blue-white-red difference scale:
 ```matlab
-fig=plot_genie_lonlat( 'fields_biogem_3d.nc' , 'ocn_PO4' , 9999.5 , 1 , 1e-6 , 'fields_biogem_3d_alt.nc' , 9999.5 )
+fig=plot_genie_lonlat( 'fields_biogem_3d.nc' , 'ocn_PO4' , 9999.5 , 1 , 1e-6 , 'fields_biogem_3d_alt.nc' , 9999.5 );
 ```
 
 If a variable name, year, or depth/longitude is not available, the functions will list available options.
@@ -62,7 +63,7 @@ By default, calling plot_genie_lonat() or plot_genie_latdepth() will make a plot
 
 Plot surface PO$_4$ lon/lat field and adjust colourscale:
 ```matlab
-fig=plot_genie_lonlat( 'fields_biogem_3d.nc' , 'ocn_PO4' , 9999.5 , 1 , 1e-6 )
+fig=plot_genie_lonlat( 'fields_biogem_3d.nc' , 'ocn_PO4' , 9999.5 , 1 , 1e-6 );
 fig.cmin=0;
 fig.cmax=2;
 fig.c_n_levels=10;
@@ -102,7 +103,7 @@ You can turn off interactive plotting by setting `autoplot=false` in the plot_ge
 
 Parameters can be changed and a final plot created by calling the .plot function. This is useful if you want a create a fully formatted plot in a script:
 ```matlab
-fig=plot_genie_lonlat( 'fields_biogem_3d.nc' , 'ocn_PO4' , 9999.5 , 1 , 1e-6 )
+fig=plot_genie_lonlat( 'fields_biogem_3d.nc' , 'ocn_PO4' , 9999.5 , 1 , 1e-6 );
 fig.cmin=0;
 fig.cmax=2;
 fig.c_n_levels=10;
@@ -113,13 +114,13 @@ This functionality also allows multi-panel figures to be constructed via the sub
 ```matlab
 figure
 subplot(2,1,1)
-fig=plot_genie_lonlat ( 'fields_biogem_3d.nc' , 'ocn_PO4' , 4999.5 , 1 , 1e-6 )
+fig=plot_genie_lonlat ( 'fields_biogem_3d.nc' , 'ocn_PO4' , 4999.5 , 1 , 1e-6 );
 fig.cmin=0;
 fig.cmax=2;
 fig.c_n_levels=10;
 fig.plot;
 subplot(2,1,2)
-fig=plot_genie_lonlat( 'fields_biogem_3d.nc' , 'ocn_PO4' , 9999.5 , 1 , 1e-6 )
+fig=plot_genie_lonlat( 'fields_biogem_3d.nc' , 'ocn_PO4' , 9999.5 , 1 , 1e-6 );
 fig.cmin=0;
 fig.cmax=2;
 fig.c_n_levels=10;
@@ -135,7 +136,7 @@ An example of the workflow:
 
 ```matlab
 % read in raw netcdf data
-data=ncread('examples/fields_biogem_3d.nc','ocn_PO4');
+data=ncread('fields_biogem_3d.nc','ocn_PO4');
 % slice last year and surface
 data=data(:,:,1,end);
 % set missing values to nans
@@ -147,7 +148,7 @@ imagesc(data) % quick visual check
 data=data./nansum(reshape(data,36*36,1))*100;
 
 % plot
-fig.plot_genie_lonlat(''examples/fields_biogem_3d.nc',data,1,1e-6)
+fig=plot_genie_lonlat('fields_biogem_3d.nc',data,1,1e-6);
 ```
 
 ---
@@ -162,20 +163,36 @@ Not yet implemented!
 
 plot_genie_latdepth can average zonally by setting a range of longitudes in the function call. This call creates a global zonal mean:
 ```matlab
-fig=plot_genie_latdepth ( 'fields_biogem_3d.nc' , 'ocn_PO4' , 9999.5 , [1:36] , 1e-6 )
+fig=plot_genie_latdepth ( 'fields_biogem_3d.nc' , 'ocn_PO4' , 9999.5 , [1:36] , 1e-6 );
 ```
 
 plot_genie_lonlat can also create a separate zonal average plot and output the data:
 ```matlab
-fig=fig=plot_genie_lonlat ( 'fields_biogem_3d.nc' , 'ocn_PO4' , 9999.5 , 1 , 1e-6 )
-[ latitude , zonal_mean ] fig.plot_zonal_mean;
+fig=plot_genie_lonlat ( 'fields_biogem_3d.nc' , 'ocn_PO4' , 9999.5 , 1 , 1e-6 );
+[ latitude , zonal_mean ]=fig.plot_zonal_mean;
 ```
 
 The zonal average plot can be formatted as a standard matlab plot by passing [Line Properties](https://www.mathworks.com/help/matlab/ref/matlab.graphics.chart.primitive.line-properties.html):
 ```matlab
-fig=fig=plot_genie_lonlat ( 'fields_biogem_3d.nc' , 'ocn_PO4' , 9999.5 , 1 , 1e-6 )
+fig=plot_genie_lonlat ( 'fields_biogem_3d.nc' , 'ocn_PO4' , 9999.5 , 1 , 1e-6 );
 [ latitude , zonal_mean ] fig.plot_zonal_mean('LineWidth',1.0,'LineStyle',':');
 ```
+
+---
+
+## Adding Contours
+
+Contours can be added to a plot using the .add_contours function. The takes the same arguments as the contour() function in MATLAB: levels is the number of contours or the specified levels, and name-value pair arguments can be passed for formatting:
+
+```matlab
+fig=plot_genie_lonlat ( 'fields_biogem_3d.nc' , 'ocn_PO4' , 9999.5 , 1 , 1e-6 );
+fig.cmin=0;
+fig.cmax=2;
+fig.add_contours([0:0.2:2],'Color','white');
+```
+
+Note, this currently works better with the lon/lat plots. The lat/depth plots produce very blocky contours!
+
 
 ---
 
@@ -189,7 +206,7 @@ data_lat=[-30; -22.2; 22.2; 30]; % deg N
 data_val=rand(4,1); 
 data_overlay=[data_lon data_lat data_val]; % into one array
 
-fig=plot_genie_lonlat ( 'fields_biogem_3d.nc' , 'ocn_PO4' , 9999.5 , 1 , 1e-6 )
+fig=plot_genie_lonlat ( 'fields_biogem_3d.nc' , 'ocn_PO4' , 9999.5 , 1 , 1e-6 );
 fig.overlay_data(data_overlay);
 ```
 Set the data to NaNs to plot a grey circle instead of coloured. This is useful to display locations of data. 
@@ -198,7 +215,7 @@ The overlay data point size can be altered via the interactive variable: `overla
 
 You can also extract the equivalent genie data from the nearest grid-cell to an output array with grid longitde, grid latitude, and grid data:
 ```matlab
-fig=plot_genie_lonlat ( 'fields_biogem_3d.nc' , 'ocn_PO4' , 9999.5 , 1 , 1e-6 )
+fig=plot_genie_lonlat ( 'fields_biogem_3d.nc' , 'ocn_PO4' , 9999.5 , 1 , 1e-6 );
 [grid_values]=fig.overlay_data(data_overlay);
 ```
 
@@ -208,7 +225,7 @@ fig=plot_genie_lonlat ( 'fields_biogem_3d.nc' , 'ocn_PO4' , 9999.5 , 1 , 1e-6 )
 
 Any plot can be saved to a bitmap (png) or vector format (svg) using the .save_bitmap or .save_vector functions via the figure handle:
 ```matlab
-fig=plot_genie_lonlat ( 'fields_biogem_3d.nc' , 'ocn_PO4' , 9999.5 , 1 , 1e-6 )
+fig=plot_genie_lonlat ( 'fields_biogem_3d.nc' , 'ocn_PO4' , 9999.5 , 1 , 1e-6 );
 fig.save_bitmap('genie_PO4.png')
 fig.save_vector('genie_PO4.svg')
 ```
@@ -235,15 +252,16 @@ fig.save_vector('genie_PO4.svg')
 - overlaid data may not be displayed if the lon/lat values are close to the edge of the figure edges.
 - the overlay data function has to be called after fig.plot if not using the functions interactively.
 - the figure background is set to the grey continent colour.
+- contouring a lat/depth plot is very blocky (due to using the imagesc function for plotting)
 
 ---
 
 ## Features to add
   
 - depth-integration
-- contours
 - circulation vectors
 - reference lists for depth/longitude and colourscale
+- custom relationships between two datasets
 
 
 
