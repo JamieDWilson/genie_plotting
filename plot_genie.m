@@ -11,7 +11,7 @@ classdef plot_genie < handle
         % autoplot when calling function and changing parameters?
         % if false, use .plot to draw figure
         % (plots to the current figure/axes handle)
-        autoplot=false;
+        autoplot=true;
         
         %---------------------------------%
         % ------ DEFAULT PARAMETERS ----- %
@@ -62,7 +62,7 @@ classdef plot_genie < handle
         overlay_data=[];
         % size of overlay datapoints
         overlay_point_size=60;
-         
+              
     end
     
     properties(GetAccess=public,SetAccess=public)
@@ -82,6 +82,7 @@ classdef plot_genie < handle
         overlay_data_x, overlay_data_y
         fig, ax, im
         lon_origin_data
+        plot_data
         
     end
     
@@ -400,6 +401,28 @@ classdef plot_genie < handle
                 otherwise
                     obj.si_om='';
             end
+        end
+        
+        
+        %---------------------------------%
+        % ----------- CONTOURS ---------- %
+        %---------------------------------% 
+        
+        function [] = add_contours(obj,levels,varargin)
+            
+            [C,h]=contour(obj.plot_data,levels);
+            for n=1:2:numel(varargin)
+                if ischar(varargin{n+1})
+                    eval(['h.' varargin{n} '=''' varargin{n+1} ''';']);
+                else
+                    eval(['h.' varargin{n} '=' varargin{n+1} ';']);
+                end
+            end
+            
+            if any(strcmp('Color',varargin))
+                clabel(C,h,'Color',varargin(find(strcmp('Color',varargin))+1));
+            end
+            
         end
         
         %---------------------------------%

@@ -138,6 +138,8 @@ classdef plot_genie_lonlat < plot_genie
             
             % change origin
             [plot_data,plot_lon]=obj.change_origin;
+            % keep copy of plot_data
+            obj.plot_data=plot_data;
             
             % make coastlines
             obj.make_coastlines(plot_data);
@@ -221,6 +223,7 @@ classdef plot_genie_lonlat < plot_genie
             
             % apply lon/lat plot limits
             set(obj.ax,'XLim',obj.lon_to_x(obj.lon_limits),'YLim',fliplr(obj.lat_to_y(obj.lat_limits)));
+            
             
             
         end

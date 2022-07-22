@@ -129,6 +129,8 @@ classdef plot_genie_latdepth < plot_genie
             
             % expand out depth axis for imagesc
             [plot_data,plot_z]=obj.expand_z;
+            % keep copy of plot_data
+            obj.plot_data=plot_data;
             
             % make coastlines
             obj.make_coastlines(plot_data);
@@ -208,9 +210,7 @@ classdef plot_genie_latdepth < plot_genie
                     scatter(obj.overlay_data_x,obj.overlay_data_y,obj.overlay_point_size,obj.overlay_data(:,3),'filled','MarkerEdgeColor','k');
                 end
             end
-            
-            
-            
+                    
         end
         
         
