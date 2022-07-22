@@ -7,7 +7,8 @@ Quick interactive plots of lon/lat or lat/depth fields from genie output.
 - [Inputs and Outputs](#inputs-and-outputs)
 - [Basic Use](#basic-use)
 - [Interactive Plotting](#interactive-plotting)
-- [Static Plotting and Subplots](#static_plotting_and_sub-plots)
+- [Static Plotting and Subplots](#static-plotting-and-sub-plots)
+- [Plotting custom arrays](#plotting-custom-arrays)
 - [Depth Integrated](#depth-integrated)
 - [Zonal Averages](#zonal-averages)
 - [Overlaying datapoints](#overlaying-datapoints)
@@ -75,6 +76,7 @@ The following parameters are editable and interactive:
 - `cmax`: maximum value for colorscale (float, []=max of data)
 - `c_nlevels`: number of colour intervals (integer)
 - `colormap`: name of colormap (string)
+- `reverse_colormap`: reverse the colormap? (logical)
 - `colorbar`: plot a colourbar (logical)
 - `colorbar_text`: colorbar text (string, 'auto' = uses variable name and units from netcdf file)
 
@@ -125,6 +127,31 @@ fig.plot;
 ```
 ---
 
+## Plotting Custom Arrays
+
+You can plot an output derived from the netcdf file outputs by replacing the `var_name` input with a matlab array. The array needs to have NaNs for land and be orientated such that imagesc(array) looks the right way up/round. The plot command still requires a relevant netcdf file to read in the grid information and the `data_scale` parameter will still apply.
+
+An example of the workflow:
+
+```matlab
+% read in raw netcdf data
+data=ncread('examples/fields_biogem_3d.nc','ocn_PO4');
+% slice last year and surface
+data=data(:,:,1,end);
+% set missing values to nans
+data(data>1e29)=NaN;
+% orientate 
+data=rot90(data);
+imagesc(data) % quick visual check
+% do something - e.g., percentage of total
+data=data./nansum(reshape(data,36*36,1))*100;
+
+% plot
+fig.plot_genie_lonlat(''examples/fields_biogem_3d.nc',data,1,1e-6)
+```
+
+---
+
 ## Depth Integrated
 
 Not yet implemented!
@@ -167,6 +194,8 @@ fig.overlay_data(data_overlay);
 ```
 Set the data to NaNs to plot a grey circle instead of coloured. This is useful to display locations of data. 
 
+The overlay data point size can be altered via the interactive variable: `overlay_point_size`, e.g., `fig.overlay_point_size=60;'.
+
 You can also extract the equivalent genie data from the nearest grid-cell to an output array with grid longitde, grid latitude, and grid data:
 ```matlab
 fig=plot_genie_lonlat ( 'fields_biogem_3d.nc' , 'ocn_PO4' , 9999.5 , 1 , 1e-6 )
@@ -190,16 +219,22 @@ fig.save_vector('genie_PO4.svg')
 
 *Colourscale Options*
 - Matlab in-built: 'jet', 'hsv', 'hot', 'cool', 'spring', 'summer', 'autumn', 'winter', 'gray', 'bone', 'copper', pink', 'parula'
-- Rainbow replacements: 'CubicYF','LinearL'
+- Rainbow replacements: 'CubicYF', 'LinearL'
 - Divergent: 'BrBG', 'PiYG', 'PRGn', 'PuOr', 'RdBu', 'RdGy', 'RdYlBu', 'RdYlGn'
 - Thanks to Andy Ridgwell!  
+
+*Plotting with 2D netcdf variables*
+- the `depth` input to plot_genie_lonlat is used only for making the title
+- ecogem output seems to use the depth numbering backwards so setting `depth` to 16 rather than 1 may state the correct depth in the title
+- variables like grid_topo in biogem output are sometimes referenced to the year 0.5
 
 ----
 
 ## Known Issues
 
-- overlaid grid data may not be displayed if the lon/lat values are close to the edge of the figure edges
-- the figure background is set to the grey continent colour
+- overlaid data may not be displayed if the lon/lat values are close to the edge of the figure edges.
+- the overlay data function has to be called after fig.plot if not using the functions interactively.
+- the figure background is set to the grey continent colour.
 
 ---
 
