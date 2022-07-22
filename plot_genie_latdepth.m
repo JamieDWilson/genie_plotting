@@ -135,6 +135,9 @@ classdef plot_genie_latdepth < plot_genie
             
             % make colormap
             obj.make_colormap;
+            if obj.reverse_colormap
+                obj.c=flipud(obj.c);
+            end   
             
             % point at relevant figure handle
             if obj.autoplot
@@ -142,7 +145,9 @@ classdef plot_genie_latdepth < plot_genie
             end  
             
             % plot data, NaNs not plotted 
-            clf
+            if obj.autoplot
+                clf
+            end
             imAlpha=ones(size(plot_data));
             imAlpha(isnan(plot_data))=0;
             obj.im=imagesc(plot_data,'AlphaData',imAlpha);

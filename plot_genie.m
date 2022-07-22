@@ -11,7 +11,7 @@ classdef plot_genie < handle
         % autoplot when calling function and changing parameters?
         % if false, use .plot to draw figure
         % (plots to the current figure/axes handle)
-        autoplot=true;
+        autoplot=false;
         
         %---------------------------------%
         % ------ DEFAULT PARAMETERS ----- %
@@ -26,13 +26,15 @@ classdef plot_genie < handle
         c_nlevels=200;
         % colormap ('auto' = parula for single dataset, RdBu for difference)
         colormap='auto';
+        % reverse colormap?
+        reverse_colormap=false;
         
         %---------- COLORBAR ----------%
         % colorbar?
         colorbar=true;
         % colorbar text ('auto' = uses variable name and units from netcdf)
         colorbar_text = {'auto'};
-        
+
         %---------- DISPLAY -----------%
         % plot title ('auto' = automatic using file name, variable name, depth and year)
         title_text = {'auto'};
@@ -71,7 +73,7 @@ classdef plot_genie < handle
         opt_args, data_n, data_2_flag, output_dirs, data, data2,
         lat, lon, z, time
         units, longname 
-        c,  reverse_colormap
+        c
         coastlines
         si_om 
         n_lon, n_lat, lon_to_i, lat_to_j, n_z 

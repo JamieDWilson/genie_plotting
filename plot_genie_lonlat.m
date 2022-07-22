@@ -136,9 +136,6 @@ classdef plot_genie_lonlat < plot_genie
         
         function [] = plot(obj)
             
-            % slice and orient plotting data
-            
-               
             % change origin
             [plot_data,plot_lon]=obj.change_origin;
             
@@ -149,6 +146,7 @@ classdef plot_genie_lonlat < plot_genie
             obj.make_colormap;
             if obj.reverse_colormap
                 obj.c=flipud(obj.c);
+                disp('blah')
             end    
             
             % point at relevant figure handle
@@ -279,8 +277,9 @@ classdef plot_genie_lonlat < plot_genie
        % plot zonal mean
        % varargin - NameValue Arguments of Line Properties
        function [lat , zonal] = plot_zonal_mean(obj,varargin)
-           
-           figure;
+           if obj.autoplot
+               figure;
+           end
            
            % mean across latitudes, flipped to match latitude order
            zonal=flipud(nanmean(obj.data,2));
