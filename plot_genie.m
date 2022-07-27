@@ -453,6 +453,7 @@ classdef plot_genie < handle
        % ---------- SAVE SVG ----------- %
        %---------------------------------%
        function save_vector(filename)
+           set(gcf, 'InvertHardcopy', 'off')
            print(filename,'-dsvg')
        end
        
