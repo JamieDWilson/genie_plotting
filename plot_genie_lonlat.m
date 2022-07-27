@@ -222,7 +222,7 @@ classdef plot_genie_lonlat < plot_genie
             end
             
             % apply lon/lat plot limits
-            set(obj.ax,'XLim',obj.lon_to_x(obj.lon_limits),'YLim',fliplr(obj.lat_to_y(obj.lat_limits)));
+            set(obj.ax,'XLim',obj.lon_to_x(obj.lon_limits)+[-0.5 0.5],'YLim',fliplr(obj.lat_to_y(obj.lat_limits))+[-0.5 0.5]);
             
             
             
