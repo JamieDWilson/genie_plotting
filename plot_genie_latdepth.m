@@ -193,7 +193,7 @@ classdef plot_genie_latdepth < plot_genie
             set(obj.ax, 'color', [0.8 0.8 0.8]);
             
             % colormaps
-            colormap(obj.c);
+            colormap(obj.ax,obj.c);
             caxis(obj.ax,[obj.cmin obj.cmax]);
             
             % title
