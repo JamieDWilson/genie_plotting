@@ -286,15 +286,7 @@ classdef plot_genie < handle
             % orders of magnitude symbols
             obj.si_orders_of_mag;
 
-            % auto title text
-            if strmatch(obj.title_text','auto')
-                if obj.data_2_flag
-                    obj.title_text={ [obj.longname ' at ' num2str(round(obj.z(obj.depth),2)) ' m'] , ['(' obj.output_dirs{1} ' @ ' num2str(obj.time{1}(obj.year(1))) ' years) - (' obj.output_dirs{2} ' @ ' num2str(obj.time{2}(obj.year(2))) ' years)'] };
-                else
-                    obj.title_text={ [obj.longname ' at ' num2str(round(obj.z(obj.depth),2)) ' m'] , ['(' obj.output_dirs{1} ' @ ' num2str(obj.time{1}(obj.year(1))) ' years)'] };
-                end
-            end
-
+           
             % auto colorbar text
             if strmatch(obj.colorbar_text,'auto')
                 obj.colorbar_text=[obj.longname ' (' obj.si_om obj.units ')'];

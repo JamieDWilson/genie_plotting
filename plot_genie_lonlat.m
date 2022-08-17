@@ -146,7 +146,7 @@ classdef plot_genie_lonlat < plot_genie
             obj.make_coastlines(plot_data);
             
             % make colormap
-            obj.make_colormap;
+            %obj.make_colormap;
             
             % point at relevant figure handle
             if obj.autoplot
@@ -194,6 +194,7 @@ classdef plot_genie_lonlat < plot_genie
             set(obj.ax, 'color', [0.8 0.8 0.8]);
             
             % colormaps
+            obj.make_colormap;
             colormap(obj.ax,obj.c);
             caxis(obj.ax,[obj.cmin obj.cmax]);
             
@@ -201,6 +202,7 @@ classdef plot_genie_lonlat < plot_genie
             obj.plot_colorbar;
             
             % title
+            obj.auto_title_text(obj);
             title(obj.title_text,'Interpreter','None');
             
             % overlay data
@@ -323,6 +325,20 @@ classdef plot_genie_lonlat < plot_genie
            end
            
                
+       end
+       
+       function [] = auto_title_text(obj)
+           
+           % auto title text
+            if strmatch(obj.title_text','auto')
+                if obj.data_2_flag
+                    obj.title_text={ [obj.longname ' at ' num2str(round(obj.z(obj.depth),2)) ' m'] , ['(' obj.output_dirs{1} ' @ ' num2str(obj.time{1}(obj.year(1))) ' years) - (' obj.output_dirs{2} ' @ ' num2str(obj.time{2}(obj.year(2))) ' years)'] };
+                else
+                    obj.title_text={ [obj.longname ' at ' num2str(round(obj.z(obj.depth),2)) ' m'] , ['(' obj.output_dirs{1} ' @ ' num2str(obj.time{1}(obj.year(1))) ' years)'] };
+                end
+            end
+
+           
        end
      
     end
