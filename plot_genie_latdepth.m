@@ -172,12 +172,6 @@ classdef plot_genie_latdepth < plot_genie
                 ylabel('Depth (km)')
             end
             
-            % colorbar
-            if obj.colorbar
-                C=colorbar;
-                ylabel(C,obj.colorbar_text);
-            end
-            
             % plot formating
             axis normal
             pbaspect([1.5 1 1]) % rectangular aspect
@@ -195,6 +189,9 @@ classdef plot_genie_latdepth < plot_genie
             % colormaps
             colormap(obj.ax,obj.c);
             caxis(obj.ax,[obj.cmin obj.cmax]);
+            
+            % colorbar
+            obj.plot_colorbar;
             
             % title
             title(obj.title_text,'Interpreter','None');

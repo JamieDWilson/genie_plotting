@@ -31,7 +31,9 @@ classdef plot_genie < handle
         
         %---------- COLORBAR ----------%
         % colorbar?
-        colorbar=true;
+        add_colorbar=true;
+        % colorbar ticks ([] = automatic via matlab)
+        colorbar_ticks=[];
         % colorbar text ('auto' = uses variable name and units from netcdf)
         colorbar_text = {'auto'};
 
@@ -73,7 +75,7 @@ classdef plot_genie < handle
         opt_args, data_n, data_2_flag, output_dirs, data, data2,
         lat, lon, z, time
         units, longname 
-        c
+        c, C
         coastlines
         si_om 
         n_lon, n_lat, lon_to_i, lat_to_j, n_z 
@@ -324,7 +326,7 @@ classdef plot_genie < handle
             addlistener(obj,'overlay_data','PostSet',@obj.handlePropertyEvents);
             addlistener(obj,'title_text','PostSet',@obj.handlePropertyEvents);
             addlistener(obj,'colorbar_text','PostSet',@obj.handlePropertyEvents);
-            addlistener(obj,'colorbar','PostSet',@obj.handlePropertyEvents);
+            addlistener(obj,'add_colorbar','PostSet',@obj.handlePropertyEvents);
             addlistener(obj,'lon_label','PostSet',@obj.handlePropertyEvents);
             addlistener(obj,'lat_label','PostSet',@obj.handlePropertyEvents);
             addlistener(obj,'z_label','PostSet',@obj.handlePropertyEvents);
@@ -332,7 +334,8 @@ classdef plot_genie < handle
             addlistener(obj,'colormap','PostSet',@obj.handlePropertyEvents);
             addlistener(obj,'lon_limits','PostSet',@obj.handlePropertyEvents);
             addlistener(obj,'lat_limits','PostSet',@obj.handlePropertyEvents);
-            
+            addlistener(obj,'reverse_colormap','PostSet',@obj.handlePropertyEvents);
+            addlistener(obj,'colorbar_ticks','PostSet',@obj.handlePropertyEvents);
         end
         
         %---------------------------------%
@@ -370,6 +373,10 @@ classdef plot_genie < handle
             else
                 obj.c=obj.make_cmap(obj.colormap,obj.c_nlevels);
             end
+            
+            if obj.reverse_colormap
+                obj.c=flipud(obj.c);
+            end    
             
         end   
         
@@ -424,6 +431,29 @@ classdef plot_genie < handle
             end
             
         end
+        
+        %---------------------------------%
+        % ----------- COlORBAR ---------- %
+        %---------------------------------% 
+        
+        function [] = plot_colorbar(obj)
+            
+            if obj.add_colorbar
+                
+                % make colobar
+                obj.C=colorbar;
+                % update default ticks and set ticks
+                if isempty(obj.colorbar_ticks)
+                    obj.colorbar_ticks=obj.C.Ticks;
+                end
+                obj.C.Ticks=obj.colorbar_ticks;
+                % add text label
+                ylabel(obj.C,obj.colorbar_text);
+                
+            end
+            
+        end
+        
         
         %---------------------------------%
         % ----------- RE-PLOT ----------- %

@@ -147,10 +147,6 @@ classdef plot_genie_lonlat < plot_genie
             
             % make colormap
             obj.make_colormap;
-            if obj.reverse_colormap
-                obj.c=flipud(obj.c);
-                disp('blah')
-            end    
             
             % point at relevant figure handle
             if obj.autoplot
@@ -182,13 +178,7 @@ classdef plot_genie_lonlat < plot_genie
             if obj.lat_label
                 ylabel('Latitude')
             end
-            
-            % colorbar
-            if obj.colorbar
-                C=colorbar;
-                ylabel(C,obj.colorbar_text);
-            end
-            
+                        
             % plot formating
             axis normal
             pbaspect([2 1 1]) % rectangular aspect
@@ -206,6 +196,9 @@ classdef plot_genie_lonlat < plot_genie
             % colormaps
             colormap(obj.ax,obj.c);
             caxis(obj.ax,[obj.cmin obj.cmax]);
+            
+            % colorbar
+            obj.plot_colorbar;
             
             % title
             title(obj.title_text,'Interpreter','None');
