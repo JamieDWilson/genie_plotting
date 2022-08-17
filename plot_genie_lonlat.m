@@ -248,7 +248,7 @@ classdef plot_genie_lonlat < plot_genie
             
             obj.overlay_data_x=obj.lon_to_x(obj.overlay_data_x);
             obj.overlay_data_y=obj.lat_to_y(obj.overlay_data(:,2));
-            obj.overlay_data(:,3)=obj.overlay_data(:,3)./obj.data_scale;
+            obj.overlay_data(:,3)=obj.overlay_data(:,3);
             
         end
 
