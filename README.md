@@ -78,7 +78,8 @@ The following parameters are editable and interactive:
 - `c_nlevels`: number of colour intervals (integer)
 - `colormap`: name of colormap (string)
 - `reverse_colormap`: reverse the colormap? (logical)
-- `colorbar`: plot a colourbar (logical)
+- `add_colorbar`: plot a colourbar (logical)
+- `colorbar_ticks': set ticks for colorbar (float. []=auto)
 - `colorbar_text`: colorbar text (string, 'auto' = uses variable name and units from netcdf file)
 
 *Map Display*
