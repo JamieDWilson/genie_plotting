@@ -79,7 +79,7 @@ The following parameters are editable and interactive:
 - `colormap`: name of colormap (string)
 - `reverse_colormap`: reverse the colormap? (logical)
 - `add_colorbar`: plot a colourbar (logical)
-- `colorbar_ticks': set ticks for colorbar (float. []=auto)
+- `colorbar_ticks`: set ticks for colorbar (float. []=auto)
 - `colorbar_text`: colorbar text (string, 'auto' = uses variable name and units from netcdf file)
 
 *Map Display*
