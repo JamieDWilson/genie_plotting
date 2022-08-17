@@ -47,6 +47,7 @@ Plot surface PO$_4$ lon/lat field from 3D netcdf output and scale to micromolar 
 ```matlab
 fig=plot_genie_lonlat( 'fields_biogem_3d.nc' , 'ocn_PO4' , 9999.5 , 1 , 1e-6 );
 ```
+<img src="examples/basic_usage_PO4.png" width=50% height=20%>
 
 Plot surface PO$_4$ lon/lat field as difference with another experiment. The colourscale will adjust to a blue-white-red difference scale:
 ```matlab
@@ -66,7 +67,7 @@ Plot surface PO$_4$ lon/lat field and adjust colourscale:
 fig=plot_genie_lonlat( 'fields_biogem_3d.nc' , 'ocn_PO4' , 9999.5 , 1 , 1e-6 );
 fig.cmin=0;
 fig.cmax=2;
-fig.c_n_levels=10;
+fig.c_nlevels=10;
 fig.title_text='Surface PO4';
 ```
 
@@ -107,7 +108,7 @@ Parameters can be changed and a final plot created by calling the .plot function
 fig=plot_genie_lonlat( 'fields_biogem_3d.nc' , 'ocn_PO4' , 9999.5 , 1 , 1e-6 );
 fig.cmin=0;
 fig.cmax=2;
-fig.c_n_levels=10;
+fig.c_nlevels=10;
 fig.plot % plot the final figure
 ```
 
@@ -118,13 +119,13 @@ subplot(2,1,1)
 fig=plot_genie_lonlat ( 'fields_biogem_3d.nc' , 'ocn_PO4' , 4999.5 , 1 , 1e-6 );
 fig.cmin=0;
 fig.cmax=2;
-fig.c_n_levels=10;
+fig.c_nlevels=10;
 fig.plot;
 subplot(2,1,2)
 fig=plot_genie_lonlat( 'fields_biogem_3d.nc' , 'ocn_PO4' , 9999.5 , 1 , 1e-6 );
 fig.cmin=0;
 fig.cmax=2;
-fig.c_n_levels=10;
+fig.c_nlevels=10;
 fig.plot;
 ```
 ---
