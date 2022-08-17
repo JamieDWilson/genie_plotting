@@ -140,6 +140,7 @@ classdef plot_genie_lonlat < plot_genie
             [plot_data,plot_lon]=obj.change_origin;
             % keep copy of plot_data
             obj.plot_data=plot_data;
+            obj.lon_limits=[min(plot_lon) max(plot_lon)];
             
             % make coastlines
             obj.make_coastlines(plot_data);
@@ -319,7 +320,7 @@ classdef plot_genie_lonlat < plot_genie
                     data=obj.data;
                     lon=obj.lon;
                     disp('Longitude origin selected not available. Choose from:')
-                    disp(lon_left_edge)
+                    disp(obj.lon-unique(diff(obj.lon))/2)
                     return
                 end
                 
