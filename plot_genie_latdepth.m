@@ -290,11 +290,17 @@ classdef plot_genie_latdepth < plot_genie
        
        function [] = auto_title_text(obj)
            
+           if numel(obj.longitude)>1
+               lon_text=[num2str(round(obj.lon(obj.longitude(1)),2)) ' to ' num2str(round(obj.lon(obj.longitude(end)),2))];
+           else
+               lon_text=num2str(round(obj.lon(obj.longitude),2));
+           end
+           
            if strmatch(obj.title_text','auto')
                 if obj.data_2_flag
-                    obj.title_text={ [obj.longname ' at ' num2str(round(obj.lon(obj.longitude),2)) ' deg E'] , ['(' obj.output_dirs{1} ' @ ' num2str(obj.time{1}(obj.year(1))) ' years) - (' obj.output_dirs{2} ' @ ' num2str(obj.time{2}(obj.year(2))) ' years)'] };
+                    obj.title_text={ [obj.longname ' at ' lon_text ' deg E'] , ['(' obj.output_dirs{1} ' @ ' num2str(obj.time{1}(obj.year(1))) ' years) - (' obj.output_dirs{2} ' @ ' num2str(obj.time{2}(obj.year(2))) ' years)'] };
                 else
-                    obj.title_text={ [obj.longname ' at ' num2str(round(obj.lon(obj.longitude),2)) ' deg E'] , ['(' obj.output_dirs{1} ' @ ' num2str(obj.time{1}(obj.year(1))) ' years)'] };
+                    obj.title_text={ [obj.longname ' at ' lon_text ' deg E'] , ['(' obj.output_dirs{1} ' @ ' num2str(obj.time{1}(obj.year(1))) ' years)'] };
                 end
             end
            
