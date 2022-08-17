@@ -202,7 +202,7 @@ classdef plot_genie_lonlat < plot_genie
             obj.plot_colorbar;
             
             % title
-            obj.auto_title_text(obj);
+            obj.auto_title_text;
             title(obj.title_text,'Interpreter','None');
             
             % overlay data
