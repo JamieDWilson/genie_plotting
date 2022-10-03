@@ -434,11 +434,19 @@ classdef plot_genie < handle
                 
                 % make colobar
                 obj.C=colorbar;
-                % update default ticks and set ticks
+                % if empty set automatically, adjust for number of colour
+                % levels in colorbar, otherwise set to user specified.
                 if isempty(obj.colorbar_ticks)
-                    obj.colorbar_ticks=obj.C.Ticks;
+                    % assume the user will specify a sensible number of
+                    % levels
+                    if obj.c_nlevels<200 
+                        delta=(obj.cmax-obj.cmin)/obj.c_nlevels; 
+                        edges=obj.cmin:delta:obj.cmax;
+                        obj.C.Ticks=edges; 
+                    end
+                else
+                    obj.C.Ticks=obj.colorbar_ticks;
                 end
-                obj.C.Ticks=obj.colorbar_ticks;
                 % add text label
                 ylabel(obj.C,obj.colorbar_text);
                 
