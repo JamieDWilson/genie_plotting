@@ -43,17 +43,27 @@ Outputs:
 
 ## Basic Use
 
-Plot surface PO$_4$ lon/lat field from 3D netcdf output and scale to micromolar units:
+Plot surface PO4 lon/lat field from 3D netcdf output and scale to micromolar units:
 ```matlab
 fig=plot_genie_lonlat( 'fields_biogem_3d.nc' , 'ocn_PO4' , 9999.5 , 1 , 1e-6 );
 ```
-<img src="examples/basic_usage_PO4.png" width=50% height=20%>
 
-Plot surface PO$_4$ lon/lat field as difference with another experiment. The colourscale will adjust to a blue-white-red difference scale:
+
+Plot surface PO4 lon/lat field as difference with another experiment. The colourscale will adjust to a blue-white-red difference scale:
 ```matlab
 fig=plot_genie_lonlat( 'fields_biogem_3d.nc' , 'ocn_PO4' , 9999.5 , 1 , 1e-6 , 'fields_biogem_3d_alt.nc' , 9999.5 );
 ```
-
+  
+The equivalent calls to plot PO4 depth sections through the Pacific are:
+```matlab
+fig=plot_genie_latdepth( 'fields_biogem_3d.nc' , 'ocn_PO4' , 9999.5 , 10 , 1e-6 );
+fig=plot_genie_latdepth( 'fields_biogem_3d.nc' , 'ocn_PO4' , 9999.5 , 10 , 1e-6 , 'fields_biogem_3d_alt.nc' , 4999.5);
+```
+  
+The figure below shows each of these basic plots:  
+  
+<img src="examples/basic_usage_PO4.png" width=100% height=100%>
+  
 If a variable name, year, or depth/longitude is not available, the functions will list available options.
 
 ---
@@ -62,14 +72,18 @@ If a variable name, year, or depth/longitude is not available, the functions wil
 
 By default, calling plot_genie_lonat() or plot_genie_latdepth() will make a plot in a new window and creates a handle for that plot. The handle can then be used to change various parameters and the plot will automatically re-draw itself. The handle refers to its specific plot so multiple plots can be opened and edited independently. 
 
-Plot surface PO$_4$ lon/lat field and adjust colourscale:
+Plot surface PO4 lon/lat field and adjust colourscale:
 ```matlab
 fig=plot_genie_lonlat( 'fields_biogem_3d.nc' , 'ocn_PO4' , 9999.5 , 1 , 1e-6 );
 fig.cmin=0;
 fig.cmax=2;
 fig.c_nlevels=10;
+fig.colormap='RdYlBu';
 fig.title_text='Surface PO4';
+fig.colorbar_text='\mumol kg^{-1}';
 ```
+  
+<img src="examples/interactive.png" width=60% height=60%>
 
 The following parameters are editable and interactive:
 
@@ -112,7 +126,7 @@ fig.c_nlevels=10;
 fig.plot % plot the final figure
 ```
 
-This functionality also allows multi-panel figures to be constructed via the subplot command:
+This functionality also allows multi-panel figures to be constructed, e.g., the multi-panel figure in [Basic Use](#basic-use), via the subplot command:
 ```matlab
 figure
 subplot(2,1,1)
@@ -179,12 +193,14 @@ The zonal average plot can be formatted as a standard matlab plot by passing [Li
 fig=plot_genie_lonlat ( 'fields_biogem_3d.nc' , 'ocn_PO4' , 9999.5 , 1 , 1e-6 );
 [ latitude , zonal_mean ] fig.plot_zonal_mean('LineWidth',1.0,'LineStyle',':');
 ```
+  
+ <img src="examples/zonal.png" width=60% height=60%>
 
 ---
 
 ## Adding Contours
 
-Contours can be added to a plot using the .add_contours function. The takes the same arguments as the contour() function in MATLAB: levels is the number of contours or the specified levels, and name-value pair arguments can be passed for formatting:
+Contours can be added to a plot using the .add_contours function. The takes the same arguments as the [contour()](https://www.mathworks.com/help/matlab/ref/contour.html) function in MATLAB: levels is the number of contours or the specified levels, and name-value pair arguments can be passed for formatting:
 
 ```matlab
 fig=plot_genie_lonlat ( 'fields_biogem_3d.nc' , 'ocn_PO4' , 9999.5 , 1 , 1e-6 );
@@ -192,7 +208,8 @@ fig.cmin=0;
 fig.cmax=2;
 fig.add_contours([0:0.2:2],'Color','white');
 ```
-
+<img src="examples/contours.png" width=60% height=60%>
+  
 Note, this currently works better with the lon/lat plots. The lat/depth plots produce very blocky contours!
 
 
@@ -202,15 +219,18 @@ Note, this currently works better with the lon/lat plots. The lat/depth plots pr
 
 Datapoints can be overlain on the plots with colours matching the colourscale. The overlay data needs to be in an nx3 array of longitude, latitude, data:
 ```matlab
-% create overlay data array
-data_lon=[23; -180; -2.3; 80]; % deg E
-data_lat=[-30; -22.2; 22.2; 30]; % deg N
-data_val=rand(4,1); 
+% create random overlay data
+data_lon=[23; -180; -20.3; 80]; % deg E
+data_lat=[-50; -22.2; 22.2; -20]; % deg N
+data_val=fig.cmin+(fig.cmax-fig.cmin)*rand(4,1); 
 data_overlay=[data_lon data_lat data_val]; % into one array
 
 fig=plot_genie_lonlat ( 'fields_biogem_3d.nc' , 'ocn_PO4' , 9999.5 , 1 , 1e-6 );
-fig.overlay_data(data_overlay);
+fig.overlay_data=data_overlay;
 ```
+  
+<img src="examples/overlay_data.png" width=60% height=60%>
+  
 Set the data to NaNs to plot a grey circle instead of coloured. This is useful to display locations of data. 
 
 The overlay data point size can be altered via the interactive variable: `overlay_point_size`, e.g., `fig.overlay_point_size=60;'.
